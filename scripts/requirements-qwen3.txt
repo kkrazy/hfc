@@ -1,0 +1,29 @@
+# Per-family pin for Qwen3 (and other post-2025-04 models).
+#
+# transformers 4.51.x is the first release with Qwen3MoeForCausalLM as a
+# first-class class. 4.40.2 (used by the default venv for OPT/Qwen2) doesn't
+# know about model_type='qwen3_moe' even with trust_remote_code, because the
+# config validators in 4.40.2 reject the new fields.
+#
+# torch / torch-npu stay pinned to the only combo that works with CANN 8.1.RC2.
+# torch.export under torch 2.1 is fragile but is the chosen capture path for
+# this venv (symbolic_trace breaks on transformers >=4.51 / Py3.9 with
+# "varnames is too small").
+torch==2.1.0
+torch-npu==2.1.0.post17
+transformers==4.51.3
+accelerate==0.34.2
+numpy<2
+sentencepiece==0.2.0
+protobuf==4.25.3
+tabulate==0.9.0
+decorator
+attrs
+cloudpickle
+absl-py
+tornado
+scipy
+# transformers 4.51 auto-imports its NPU flash-attention shim when torch_npu is
+# present; that path needs einops. Without it `from transformers import
+# AutoModelForCausalLM` for qwen3_moe raises ModuleNotFoundError.
+einops
